@@ -11,7 +11,32 @@ const categories = [
   { id: "industrial", label: "Ban Industri" },
 ]
 
-const products = [
+interface ProductSpecification {
+  size: string
+  speed: number
+  od: number
+  td: number
+  sw: string
+  rim: string
+  load: number
+  pressure: number
+  loadIndex: string
+}
+
+interface Product {
+  id: string
+  name: string
+  category: string
+  position: string
+  application: string
+  image: string
+  description: string
+  features: string[]
+  sizes: string[]
+  specifications?: ProductSpecification[]
+}
+
+const products: Product[] = [
   // OTR Products - From PDF Brochure
   {
     id: "rem2",
@@ -23,6 +48,10 @@ const products = [
     description: "Desain tapak multi-fungsi non-directional untuk penggunaan optimal pada peralatan. Traksi superior di pasir, batu, lumpur dan permukaan lainnya. OEM Certified.",
     features: ["Multi-fungsi non-directional", "OEM Certified", "Retreadable"],
     sizes: ["17.5R25", "20.5R25", "23.5R25", "26.5R25", "29.5R25", "750/65R25", "775/65R29", "875/65R29"],
+    specifications: [
+      { size: "23.5R25", speed: 10, od: 600, td: 161736, sw: "19.50/2.5", rim: "E3/L3", load: 14500, pressure: 450, loadIndex: "L3" },
+      { size: "23.5R25 (REM2N)", speed: 10, od: 600, td: 161730, sw: "19.50/2.5", rim: "L3", load: 14500, pressure: 450, loadIndex: "L3" },
+    ],
   },
   {
     id: "rem3",
@@ -304,15 +333,54 @@ export function ProductGrid() {
                 </button>
 
                 {expandedProduct === product.id && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {product.sizes.map((size) => (
-                      <span
-                        key={size}
-                        className="text-xs px-3 py-1.5 rounded-md bg-dc-yellow/10 text-dc-dark font-mono font-medium"
-                      >
-                        {size}
-                      </span>
-                    ))}
+                  <div className="mt-4 space-y-4">
+                    {/* Sizes */}
+                    <div>
+                      <h4 className="text-xs font-bold text-foreground mb-2 uppercase tracking-wider">Ukuran Tersedia</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {product.sizes.map((size) => (
+                          <span
+                            key={size}
+                            className="text-xs px-3 py-1.5 rounded-md bg-dc-yellow/10 text-dc-dark font-mono font-medium"
+                          >
+                            {size}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Technical Specifications Table */}
+                    {product.specifications && product.specifications.length > 0 && (
+                      <div>
+                        <h4 className="text-xs font-bold text-foreground mb-2 uppercase tracking-wider">Spesifikasi Teknis</h4>
+                        <div className="overflow-x-auto rounded-lg border border-border bg-secondary/30">
+                          <table className="w-full text-xs">
+                            <thead className="bg-secondary border-b border-border">
+                              <tr>
+                                <th className="px-2 py-2 text-left font-bold text-foreground">Ukuran</th>
+                                <th className="px-2 py-2 text-left font-bold text-foreground">Kecepatan (km/h)</th>
+                                <th className="px-2 py-2 text-left font-bold text-foreground">OD (mm)</th>
+                                <th className="px-2 py-2 text-left font-bold text-foreground">TD (mm)</th>
+                                <th className="px-2 py-2 text-left font-bold text-foreground">Beban (kg)</th>
+                                <th className="px-2 py-2 text-left font-bold text-foreground">Tekanan (kPa)</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-border">
+                              {product.specifications.map((spec, idx) => (
+                                <tr key={idx} className="hover:bg-secondary/50">
+                                  <td className="px-2 py-2 font-mono font-semibold text-foreground">{spec.size}</td>
+                                  <td className="px-2 py-2 text-foreground">{spec.speed}</td>
+                                  <td className="px-2 py-2 text-foreground">{spec.od}</td>
+                                  <td className="px-2 py-2 text-foreground">{spec.td}</td>
+                                  <td className="px-2 py-2 text-foreground">{spec.load}</td>
+                                  <td className="px-2 py-2 text-foreground">{spec.pressure}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
